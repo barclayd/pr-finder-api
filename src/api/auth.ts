@@ -2,7 +2,6 @@ import { Strategy as GitHubStrategy } from 'passport-github';
 import passport from 'passport';
 import express from 'express';
 import serverless from 'serverless-http';
-import cors from 'cors';
 import { GithubUser } from '../types';
 
 enum Strategy {
@@ -13,7 +12,6 @@ const CALLBACK_URL = '/auth/github/callback';
 const VSCODE_SERVER = 'http://localhost:54321/auth';
 
 const app = express();
-app.use(cors());
 app.use(passport.initialize());
 passport.use(
   new GitHubStrategy(
