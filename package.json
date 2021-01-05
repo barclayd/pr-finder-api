@@ -1,9 +1,9 @@
 {
   "name": "pr-finder-api",
   "version": "0.1.0",
-  "description": "Notes api built on serverless infrastructure, hosted on AWS",
+  "description": "PR finder lambdas built on serverless infrastructure, hosted on AWS",
   "scripts": {
-    "run:local:auth": "./scripts/localFunction.sh auth",
+    "run:local": "./scripts/localFunction.sh",
     "deploy:all": "serverless deploy",
     "deploy:single-function": "./scripts/deployFunction.sh",
     "test": "serverless-bundle test"
