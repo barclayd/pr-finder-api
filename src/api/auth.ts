@@ -23,7 +23,7 @@ passport.use(
       callbackURL: `https://r997n84ck8.execute-api.eu-west-2.amazonaws.com/production${CALLBACK_URL}`,
     },
     (accessToken, refreshToken, profile, cb) => {
-      // console.log({ profile });
+      console.log({ profile, accessToken, refreshToken });
       cb(null, {
         accessToken,
         refreshToken,
@@ -36,11 +36,22 @@ app.get('/auth', (_req, res) => {
   res.send('Hello, world');
 });
 
-app.get('/auth/github', passport.authenticate(Strategy.github));
+app.get(
+  '/auth/github',
+  passport.authenticate(Strategy.github, {
+    session: false,
+  }),
+);
 
-app.get(CALLBACK_URL, passport.authenticate(Strategy.github), (_req, res) => {
-  res.send('User successfully authenticated');
-});
+app.get(
+  CALLBACK_URL,
+  passport.authenticate(Strategy.github, {
+    session: false,
+  }),
+  (_req, res) => {
+    res.send('User successfully authenticated');
+  },
+);
 
 const main = serverless(app);
 exports.main = async (event, context) => {
