@@ -18,7 +18,6 @@ Replace `<NAME OF FUNCTION>` with function name
 ./scripts/localFunction.sh <NAME OF FUNCTION>
 ```
 
-
 ### How to deploy single function
 
 Replace `<NAME OF FUNCTION>` with function name
@@ -32,4 +31,3 @@ npm run deploy:single-function <NAME OF FUNCTION>
 ```shell
 npm run deploy:all
 ```
-
