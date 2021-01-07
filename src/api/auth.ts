@@ -62,11 +62,9 @@ app.get(
     const encodedData = Buffer.from(JSON.stringify(userData)).toString(
       'base64',
     );
-    res.redirect(`${VSCODE_SERVER}/${encodedData}`);
+    const uriEncode = encodeURIComponent(encodedData);
+    res.redirect(`${VSCODE_SERVER}/${uriEncode}`);
   },
 );
 
-const main = serverless(app);
-exports.main = async (event, context) => {
-  return await main(event, context);
-};
+exports.main = serverless(app);
