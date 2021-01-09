@@ -12,3 +12,19 @@ interface GithubUserProfile {
     organizations_url: string;
   };
 }
+
+export interface PRWebhook {
+  pull_request: {
+    state: string;
+    url: string;
+    title: string;
+    user: {
+      login: string;
+      avatar_url: string;
+      html_url: string;
+    };
+  };
+  repository: {
+    html_url: string;
+  };
+}
