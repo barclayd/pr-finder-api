@@ -1,8 +1,10 @@
 import { Strategy as GitHubStrategy } from 'passport-github';
 import passport from 'passport';
 import express from 'express';
+import bodyParser from 'body-parser';
 import serverless from 'serverless-http';
-import { GithubUser } from '../types';
+import { GithubUser, PRWebhook } from '../types';
+import { EncoderService } from '../services/Encoder';
 
 enum Strategy {
   github = 'github',
@@ -13,6 +15,7 @@ const VSCODE_SERVER = 'http://localhost:54321/auth';
 
 const app = express();
 app.use(passport.initialize());
+app.use(bodyParser.json());
 passport.use(
   new GitHubStrategy(
     {
@@ -22,7 +25,6 @@ passport.use(
       scope: ['repo', 'read:org'],
     },
     (accessToken, refreshToken, profile, cb) => {
-      console.log({ profile, accessToken, refreshToken });
       cb(null, {
         profile,
         accessToken,
@@ -43,6 +45,25 @@ app.get(
   }),
 );
 
+app.post('/auth/github/webhook', (req, res) => {
+  const { pull_request, repository } = req.body as PRWebhook;
+  const prData = {
+    repo: repository.html_url,
+    pull_request: {
+      url: pull_request.url,
+      title: pull_request.title,
+      author: {
+        login: pull_request.user.login,
+        avatar: pull_request.user.avatar_url,
+        url: pull_request.user.html_url,
+      },
+      state: pull_request.state,
+    },
+  };
+  const encodedData = EncoderService.encode(prData);
+  res.redirect(`${VSCODE_SERVER}/${encodedData}`);
+});
+
 app.get(
   CALLBACK_URL,
   passport.authenticate(Strategy.github, {
@@ -59,11 +80,8 @@ app.get(
       organisationUrl: _json.organizations_url,
       accessToken,
     };
-    const encodedData = Buffer.from(JSON.stringify(userData)).toString(
-      'base64',
-    );
-    const uriEncode = encodeURIComponent(encodedData);
-    res.redirect(`${VSCODE_SERVER}/${uriEncode}`);
+    const encodedData = EncoderService.encode(userData);
+    res.redirect(`${VSCODE_SERVER}/${encodedData}`);
   },
 );
 
